@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script language="javascript" type="text/javascript" src="js/web3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="js/sdbb_abi.js"></script>
+
+</head>
+<body>
+
+<script>
+
+
+    var userAccount;
+    var sdbbContract;
+
+
+    function getRulesByOwner(owner) {
+        return sdbbContract.methods.getRulesByOwner(owner).call()
+    }
+
+    function getRuleDetails(id) {
+        return sdbbContract.methods.rules(id).call()
+    }
+
+    function createRule(source, dest, action) {
+        // This is going to take a while, so update the UI to let the user know
+        // the transaction has been sent
+        $("#txStatus").text("Creating a rule on the blockchain. This may take a while...");
+        // Send the tx to our contract:
+        return sdbbContract.methods.createRule(source, dest, action)
+            .send({ from: userAccount })
+            .on("receipt", function(receipt) {
+                $("#txStatus").text("Successfully created " + "!");
+                // Transaction was accepted into the blockchain, let's redraw the UI
+                getRulesByOwner(userAccount).then(displayRules);
+            })
+            .on("error", function(error) {
+                // Do something to alert the user their transaction has failed
+                $("#txStatus").text(error);
+            });
+    }
+
+    function displayRules(ids) {
+        $("#rules").empty();
+        for (id of ids) {
+            console.log(id);
+            getRuleDetails(id)
+                .then(function(rule) {
+                    // Using ES6's "template literals" to inject variables into the HTML.
+                    // Append each one to our #zombies div
+                    console.log(rule);
+                    $("#rules").append(`<div class="rules">
+              <ul>
+                <li>Source: ${rule.source}</li>
+                <li>Dest: ${rule.dest}</li>
+                <li>Action: ${rule.action}</li>
+                <li>Active: ${rule.active}</li>
+              </ul>
+            </div>`);
+                });
+        }
+    }
+
+    async function startApp() {
+        var sdbbAddress = "0x0cdd3217dcfb2bdb456f9219ea1d81219ac74d7e";
+        sdbbContract = new web3.eth.Contract(sdbbABI, sdbbAddress);
+
+        var accounts = await web3.eth.getAccounts();
+
+        if (accounts[0] !== userAccount) {
+            userAccount = accounts[0];
+            getRulesByOwner(userAccount).then(displayRules);
+
+        }
+    }
+        window.addEventListener('load', async () => {
+            // Modern dapp browsers...
+            console.log("Start");
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    await ethereum.enable();
+                    var accounts= await web3.eth.getAccounts();
+                    var option={from: accounts[0] };
+                    console.log(option);
+                   startApp()
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            // Legacy dapp browsers...
+            else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider);
+                // Acccounts always exposed
+                web3.eth.sendTransaction({/* ... */});
+            }
+            // Non-dapp browsers...
+            else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+        })
+    
+    function createRuleButton() {
+        createRule($("#source").val(),$("#dest").val(),$("#action").val());
+    }
+
+
+
+</script>
+<h1>Add a rule</h1>
+<form action="">
+    Sensor:<br>
+    <input type="text" id="source" value="">
+    <br>
+    Actuator:<br>
+    <input type="text" id="dest" value="">
+    <br>
+    Action:<br>
+    <input type="text" id="action" value="">
+    <br><br>
+    <button type="button" onclick="createRuleButton()">Submit</button>
+</form>
+
+<br>
+<h2 id = "txStatus"></h2>
+<br>
+<h1>Active Rules</h1>
+<br>
+<div id="rules"></div>
+
+</body>
+</html>

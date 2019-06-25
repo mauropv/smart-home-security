@@ -1,0 +1,114 @@
+[{
+  "constant": false,
+  "inputs": [
+    {
+      "name": "_source",
+      "type": "address"
+    },
+    {
+      "name": "_dest",
+      "type": "address"
+    },
+    {
+      "name": "_action",
+      "type": "string"
+    }
+  ],
+  "name": "createRule",
+  "outputs": [],
+  "payable": false,
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": false,
+"name": "sender",
+"type": "address"
+},
+{
+"indexed": false,
+"name": "source",
+"type": "address"
+},
+{
+"indexed": false,
+"name": "dest",
+"type": "address"
+},
+{
+"indexed": false,
+"name": "action",
+"type": "string"
+}
+],
+"name": "NewRule",
+"type": "event"
+},
+{
+"constant": true,
+"inputs": [
+{
+"name": "_owner",
+"type": "address"
+}
+],
+"name": "getRulesByOwner",
+"outputs": [
+{
+"name": "",
+"type": "uint256[]"
+}
+],
+"payable": false,
+"stateMutability": "view",
+"type": "function"
+},
+{
+"constant": true,
+"inputs": [
+{
+"name": "",
+"type": "uint256"
+}
+],
+"name": "rules",
+"outputs": [
+{
+"name": "source",
+"type": "address"
+},
+{
+"name": "dest",
+"type": "address"
+},
+{
+"name": "action",
+"type": "string"
+}
+],
+"payable": false,
+"stateMutability": "view",
+"type": "function"
+},
+{
+"constant": true,
+"inputs": [
+{
+"name": "",
+"type": "uint256"
+}
+],
+"name": "ruleToOwner",
+"outputs": [
+{
+"name": "",
+"type": "address"
+}
+],
+"payable": false,
+"stateMutability": "view",
+"type": "function"
+}]
