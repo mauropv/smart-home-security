@@ -1,6 +1,6 @@
 # Proof of Concept
 
-This repository contains the Proof of Concept for project x.
+This repository contains the Proof of Concept of SHAC, a part of SDBB.
 
 # Quickstart
 
